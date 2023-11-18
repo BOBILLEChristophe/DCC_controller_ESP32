@@ -1,0 +1,625 @@
+<!--   
+//   Controller DCC++ permet de commander de logiciel DCC++ BASE STATION de Gregg E. Berman COPYRIGHT (c) 2013-2016
+
+//   (©) 2016-2018 - Christophe BOBILLE
+//   Ce programme est un logiciel libre ; vous pouvez le redistribuer et/ou le modifier
+//	 au titre des clauses de la Licence Publique Générale GNU, telle que publiée
+//   par la Free Software Foundation ; soit la version 3 de la Licence, 
+//   ou (à votre discrétion) une version ultérieure quelconque.
+
+//   Ce programme est distribué dans l'espoir qu'il sera utile,
+//   mais SANS AUCUNE GARANTIE ; sans même une garantie implicite de
+//   COMMERCIABILITE ou DE CONFORMITE A UNE UTILISATION PARTICULIERE.
+//   Voir la Licence Publique Générale GNU pour plus de détails.
+//   Vous devriez avoir reçu un exemplaire de la Licence Publique Générale
+//   GNU avec ce programme ; si ce n'est pas le cas, voyez http://www.gnu.org/licenses
+
+
+//   This program is free software: you can redistribute it and/or modify
+//   it under the terms of the GNU General Public License as published by
+//   the Free Software Foundation, either version 3 of the License, or
+//   (at your option) any later version.
+
+//   This program is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//   GNU General Public License for more details.
+
+//   You should have received a copy of the GNU General Public License
+//   along with this program.  If not, see http://www.gnu.org/licenses
+//   GNU General Public License:  http://opensource.org/licenses/GPL-3.0
+
+
+
+//********* Controller DCC++
+//***** v 2.2 			- le 06/09/2016 à 19:03:00
+//***** v 2.3 			- le 27/12/2016 à 09:38:00
+//***** v 2.4 (release) - le 29/01/2017 à 01:23:00
+//***** v 2.5 (release) - le 29/01/2017 à 09:15:00
+//***** v 2.6 (release) - le 29/01/2017 à 13:56:00
+// 				1° - Ajout d'une fenêtre de confirmation pour annuler la lecture de CV's en cas de problème.
+//     			Message reçu de DCC++ Base Station de type "<r123|123|1 -1>" avec -1 en fin.
+// 				2° - Arret de la loco si tentative de modifier la CV 1 (adresse) sur la voie principale alors
+//      		que la vitesse est > 0.
+//***** v 2.7 (release) - le 30/01/2017 à 12:29:00
+// 				1° - Ajout de fonctionnalités concernant la gestion des CV's comme l'ajout automatique des noms et labels
+// 				2° - Ajout du n° de version en haut de page
+// 				3° - Ajout d'une zone rétractable de paramètrage en haut de page
+// 				4° - Ajout d'options dans cette zone
+//      			* Selection de l'adresse IP de l'Arduino supportant DCC++ Base Station par menu déroulant.
+// 					* Choix du nombre de CV's à lire par menu déroulant.
+//					* Ajout de plusieurs fonctions liées aux sauvegardes
+// 				5° La zone "Noms pour les fonctions :" dans les paramètrages de foncions à été rendue rétractable
+//***** v 2.8 (release) - le 02/02/2017 à 19:52:00
+//				Ajout de "dccpp" dans les URL's des requêtes destinées à DCC++ Base Station pour être compatible
+//***** v 2.8.1 (release) - le 04/02/2017 à 21:23:00
+// 				Ajout d'un objet manufacturers contenant les informations relatives au fabricants de décodeurs
+//				Ajout d'un objet cvLabels contenant les informations relatives aux labels des CV's
+//				********  ATTENTION ******** Le fichier "data.json" a été renommé "locos.json"
+//				et se touve maintenant placés dans le répertoire "config".
+//***** v 2.8.2 à 2.8.5 (release) - le 21/02/2017 à 08:47:00
+//				Nombreuses évolutions liées à la lecture des cv's et à leur programmation
+//***** v 3.0 R1 BETA - le 22/02/2017 à 18:21:00 Version on-line démo
+//***** v 3.0.1 R1 BETA - le 02/11/2017 à 10:02:00 Version desktop et serveur full
+//***** v 4.0 R5 BETA (Version pour Node.js) - le 07/11/2017 à 08:10:00
+//
+//		Cette version permet de communiquer par TCP avec DCC++ via un serveur Node.js
+//      Elle permet de piloter la carte Arduino (DCC++ BaseStation) via le port série ou ethernet.
+//		Dans le première cas, les fonctions de lecture de CV's ne sont pas disponibles.
+//      Configuration requise :
+//      -  NodeJs : dccpp_node.js
+//      -  Liaison série USB : Arduino Uno ou Mega
+//      -  Liaison ethernet : Arduino Mega + shield ethernet
+//      -  DCC++ BaseStation version originale DCCpp_Uno : https://github.com/DccPlusPlus/BaseStation
+//		-  Arduino Motor Shield ou Pololu Dual MC33926 Motor Shield
+//
+//      Documentation DCC++ : https://github.com/DccPlusPlus/BaseStation/wiki/Getting-Started-With-DCC---Hardware
+//
+//***** v 4.1 (release) (Version pour Node.js) - le 22/11/2017 à 17:31:00
+//      		Correction de bugs
+//      		Ajout du Full Screen
+//      		Version sm pour tablettes et smartphones
+//      		Sauvegarde de paramétres sur disque via Node.js
+//
+//***** v 4.2 (release) (Version pour Node.js) - le 27/11/2017 à 19:32:00
+//      		Correction de bugs sur serialPort
+//      		Améliorations sur la version smartphone
+//      		Affichage d'informations supplémentaires dans le terminal
+//	
+//***** v 4.2.1 (release) (Version pour Node.js) - le 06/08/2021 à 19:32:00
+//      		Correction de bugs mineurs
+//
+//***** v 4.3.0 (release) (Version pour Node.js) - le 09/03/2022 à 11:00:00
+//          Importantes modification pour la lecture des CVs
+//***** v 4.3.1 (release) (Version pour Node.js) - le 15/03/2023 à 12:56:00
+//          Modification de la fonction eStop (emergency)
+//
+//***** v 5.0 (release) (Version déstinée à être chargée en mémoire flash d'un ESP32)
+//
+//***************************************************************************************************************************
+
+-->
+
+<!doctype html>
+<html ng-app="trainsApp">
+<head>
+<link href="img/icon.jpg" rel="shortcut icon">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Scripts de l'application -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js"></script>
+<script src="gauge.min.js"></script>
+<script src="controller_5.0.js"></script>
+<!-- <script src="socket.io.js"></script>-->
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="w3.css">
+<link rel="stylesheet" href="style.css">
+<title>My controller DCC++</title>
+</head>
+
+<body ng-controller="pilotLocosCtrl">
+<div class="container-fluid">
+  <div class="spacer_20"></div>
+  <header>
+    <button class="" ng-click="showSettings = !showSettings;"><span ng-class="{'glyphicon glyphicon-upload' : showSettings, 'glyphicon glyphicon-download' : !showSettings}"></span></button>
+    <div class="champ_header">v <span>{{ numVersion }}</span></div>
+    <div class="champ_header">
+      <button type="button" id="btn_fullScreen" class="glyphicon glyphicon-fullscreen btn btn-default"></button>
+      Full screen </div>
+    <div class="champ_header">
+      <button type="button" id="btn_eStop" class="glyphicon glyphicon-alert btn btn-default typoYellow"></button>
+      e-Stop </div>
+    <div class="champ_header">
+      <button id="btn_power" type="button" ng-class="{'glyphicon glyphicon-off btn btn-default typoGreen': powerStatus == '0', 'glyphicon glyphicon-off btn btn-default typoRed': powerStatus == '1' }" title="Alimentation"></button>
+      Power </div>
+    <!-- jauge -->
+    <div class="champ_header">
+      <meter id="current" ng-model="currentValue" value="{{currentValue}}" min="0" max="3000" low="1750" high="2500" optimum="1500" style="width: 200px; height: 20px;"> </meter>
+      <span class = 'strong'> : {{ currentValue }} mA</span> </div>
+    <div class="champ_header">Logs : <span class="typoRed">{{ responseServer }}</span>
+      <div id="responseServer"></div>
+    </div>
+    <div ng-show="showSettings">
+      <div class="border_20 spacer_20"></div>
+      <table class="tabWidth75">
+        <!-- <tr>
+            <td>Adresse IP :</td>
+            <td><input type="text" id="ipNodeJs" ng-model="param.ipNodeJs" size="50"></td>
+          </tr> -->
+        <tr>
+          <td>Durée d'affichage des logs :</td>
+          <td><input type="number" ng-model="param.responseDislayTimeout" min="1000" max="9999" size="60">
+            ms</td>
+        </tr>
+      </table>
+     
+      <div class="border_20 spacer_20"></div>
+      <div class="spacer_20"></div>
+      Sauvegardes :
+      <table width="30%">
+        <tr>
+          <td><button type="button" id="btn_localStorageActive" ng-class="{'glyphicon glyphicon-ok btn btn-default typoGreen': param.localStorageActive, 'glyphicon glyphicon-remove btn btn-default typoRed' : !param.localStorageActive}" title="Activer le localstorage"></button></td>
+          <td>Localstorage sauvegarde automatique : {{ param.localStorageActive }} - Contenu : {{ localStorageLength }} élément(s)</td>
+        </tr>
+        <tr>
+          <td><button type="button" class="glyphicon glyphicon-floppy-save btn btn-default" ng-click="recLocalstorage()" title="Enregistrer dans le localstorage"></button></td>
+          <td>Enregistrer dans le localstorage</td>
+        </tr>
+        <tr>
+          <td><button type="button" class="glyphicon glyphicon-trash btn btn-default" ng-click="removeLocalstorage()" title="Effacer le localstorage"></button></td>
+          <td>Effacer le localstorage</td>
+        </tr>
+        <tr>
+          <td><button type="button" class="glyphicon glyphicon-open btn btn-default" ng-click="loadLocosHd2()" title="Charger le fichier 'locos.json'"></button></td>
+          <td>Charger les locos à partir du disque</td>
+        </tr>
+        <tr> 
+          <td><button type="button" class="glyphicon glyphicon-floppy-save btn btn-default" ng-click="hdSave()" title="Enregistrer sur disque"></button></td>
+          <td>Enregistrer toutes les données sur disque.</td>
+        </tr>
+      </table>
+    </div>
+    <!--ng-show="showSettings"--> 
+  </header>
+  <!--header-->
+  
+  <locos>
+    <div class="w3-blockquote w3-paragraph w3-light-grey w3-card-4 w3-leftbar w3-border-red w3-text-grey">
+      <div class="float_right">
+        <div id="loco_listSelect"><a href ng-click="showLocos('icons')">Icones</a> <span> - </span> <a href ng-click="showLocos('liste')">Liste</a></div>
+        <!--loco_listSelect-->
+        
+        <button class="btn_fermeture_zone" ng-click="showLocomotives = !showLocomotives;"> <span ng-class="{'glyphicon glyphicon-upload glyphicon_18' : showLocomotives, 'glyphicon glyphicon-download glyphicon_18' : !showLocomotives}"></span></button>
+        <button class="btn_fermeture_zone" id="addLoco" title="Ajouter une loco"><span class="glyphicon glyphicon-plus-sign typoGreen glyphicon_18"></span></button>
+      </div>
+      <h3 class="title_section">Locomotives</h3>
+    </div>
+    <div ng-show="showLocomotives">
+      <div ng-show="showLocosIcons">
+        <div class="row text-center">
+          <div class="col-sm-2" ng-repeat="el in locomotives">
+            <div ng-click="selectionLoco(el)">
+              <h6>{{ el.nomCourt }}</h6>
+              <img ng-src="{{ el.urlImg }}" class="image_shadow_icons clickable" alt="img_loco" width="58" height="34"> <span ng-class="{'glyphicon glyphicon-chevron-right typoGreen': el.sens == '1', 'glyphicon glyphicon-chevron-left typoRed': el.sens == '0'}"></span><span ng-class="{'typoBlack': el.vitesse == 0, 'typoRed': el.vitesse > 0 }">{{ el.vitesse }}</span> </div>
+          </div>
+        </div>
+      </div>
+      <!--locos_icons-->
+      <div ng-show="showLocosListe">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>&nbsp;</th>
+              <th><a ng-click="triLocos('id')">ID</a> <span class="hSpacer" ng-class="cssChevronsTri('id')"></span></th>
+              <th><a ng-click="triLocos('address')">Adresse</a> <span class="hSpacer" ng-class="cssChevronsTri('address')"></span></th>
+              <th><a ng-click="triLocos('nomCourt')">Nom</a> <span class="hSpacer" ng-class="cssChevronsTri('address')"></span></th>
+              <th>Sens</th>
+              <th>Vitesse</th>
+              <th class="listLocoCol06">Supprimer</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="el in locomotives | orderBy:champTri:triDescendant" class="clickable" ng-click="selectionLoco(el)">
+              <td class="listLocoCol01"><img ng-src="{{ el.urlImg }}" alt="img_loco" width="58" height="34"></td>
+              <td class="listLocoCol01">{{ el.id }}</td>
+              <td class="listLocoCol02">{{ el.address }}</td>
+              <td class="listLocoCol03">{{ el.nomCourt }}</td>
+              <td class="listLocoCol04"><span ng-class="{'glyphicon glyphicon-chevron-right typoGreen': el.sens == '1', 'glyphicon glyphicon-chevron-left typoRed': el.sens == '0'}"></span></td>
+              <td class="listLocoCol05" ng-class="{'typoBlack': el.vitesse == 0, 'typoRed': el.vitesse > 0 }">{{ el.vitesse }}</td>
+              <td class="listLocoCol06"><button class="btn_delete" ng-click="deleteLoco(el, el.nomCourt)" title="Supprimer la loco"><span class="glyphicon glyphicon-trash"></span></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <!--locos_liste--> 
+    </div>
+  </locos>
+  <!--locos-->
+  
+  <div class="w3-blockquote w3-paragraph w3-light-grey w3-card-4 w3-leftbar w3-border-red w3-text-grey">
+    <button class="btn_fermeture_zone" ng-click="showLocoSelectionnee = !showLocoSelectionnee;"> <span ng-class="{'glyphicon glyphicon-upload glyphicon_18' : showLocoSelectionnee, 'glyphicon glyphicon-download glyphicon_18' : !showLocoSelectionnee}"></span></button>
+    <h3 class="title_section">Modèle : {{ locoSelectionnee.nomLong }}</h3>
+  </div>
+  <div ng-show="showLocoSelectionnee">
+    <div class="spacer_20"></div>
+    <form id="form1">
+      <!-- <div id="throttleSpeedRange" class="col-auto text-center">  -->
+        <!-- // https://canvas-gauges.com/documentation/user-guide/configuration -->
+        <!-- <canvas id="gauge-id"></canvas> -->
+      <!-- </div> -->
+      <table width="100%">
+        <tr>
+          <td width="20%"></td>
+          <td width="20%"><canvas id="gauge-id"></canvas></td>
+          <td width="20%"></td>
+          <td width="20%"><img class="image_shadow" ng-src="{{ locoSelectionnee.urlImg }}" alt="img_loco" width="217"></td>
+          
+          
+        
+          <!-- <td colspan="4"></td>
+          <td rowspan="3"><img class="image_shadow" ng-src="{{ locoSelectionnee.urlImg }}" alt="img_loco" width="217"></td>
+         -->
+        
+        </tr>
+        <tr>
+          <td>STOP</td>
+          <td><button id="btn_stop" type="button" class="glyphicon glyphicon-stop btn btn-default"></button></td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>SENS</td>
+          <td><button type="button" id="btn_AR" class="glyphicon glyphicon-arrow-left btn btn-default" ng-class="{'typoGreen': locoSelectionnee.sens == '0' }"></button></td>
+          <td></td>
+          <td><button type="button" id="btn_AV" class="glyphicon glyphicon-arrow-right btn btn-default" ng-class="{'typoGreen': locoSelectionnee.sens == '1' }"></button></td>
+        </tr>
+        <tr>
+          <td>VITESSE</td>
+          <td colspan="2"><input id="speedSlider" class="speedSlider" type="range" min="0" max="126" ng-model="locoSelectionnee.vitesse" ng-change="setTraction()"/></td>
+          <td>{{ locoSelectionnee.vitesse }}</td>
+          <td>&nbsp;</td>
+        </tr>
+      </table>
+      <div class="border_20 spacer_20"></div>
+      <div class="spacer_20"></div>
+      <table width="100%">
+        <tr>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[4] != ''"> <!-- une bizarrerie de DCC++ !!! La lumière est en 4 -->
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[4]" ng-click="setFn(0, 1, 2, 3, 4)">
+                - {{ locoSelectionnee.btn_fn_label[4] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[0] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[0]" ng-click="setFn(0, 1, 2, 3, 4)">
+                - {{ locoSelectionnee.btn_fn_label[0] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[1] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[1]" ng-click="setFn(0, 1, 2, 3, 4)">
+                - {{ locoSelectionnee.btn_fn_label[1] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[2] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[2]" ng-click="setFn(0, 1, 2, 3, 4)">
+                - {{ locoSelectionnee.btn_fn_label[2] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[3] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[3]" ng-click="setFn(0, 1, 2, 3, 4)">
+                - {{ locoSelectionnee.btn_fn_label[3] }}</label>
+            </div></td>
+        </tr>
+        <tr>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[5] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[5]" ng-click="setFn(5, 6, 7, 8)">
+                - {{ locoSelectionnee.btn_fn_label[5] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[6] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[6]" ng-click="setFn(5, 6, 7, 8)">
+                - {{ locoSelectionnee.btn_fn_label[6] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[7] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[7]" ng-click="setFn(5, 6, 7, 8)">
+                - {{ locoSelectionnee.btn_fn_label[7] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[8] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[8]" ng-click="setFn(5, 6, 7, 8)">
+                - {{ locoSelectionnee.btn_fn_label[8] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[9] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[9]" ng-click="setFn(9, 10, 11, 12)">
+                - {{ locoSelectionnee.btn_fn_label[9] }}</label>
+            </div></td>
+        </tr>
+        <tr>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[10] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[10]" ng-click="setFn(9, 10, 11, 12)">
+                - {{ locoSelectionnee.btn_fn_label[10] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[11] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[11]" ng-click="setFn(9, 10, 11, 12)">
+                - {{ locoSelectionnee.btn_fn_label[11] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[12] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[12]" ng-click="setFn(9, 10, 11, 12)">
+                - {{ locoSelectionnee.btn_fn_label[12] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[13] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[13]" ng-click="setFn(13, 14, 15, 16, 17, 18, 19, 20)">
+                - {{ locoSelectionnee.btn_fn_label[13] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[14] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[14]" ng-click="setFn(13, 14, 15, 16, 17, 18, 19, 20)">
+                - {{ locoSelectionnee.btn_fn_label[14] }}</label>
+            </div></td>
+        </tr>
+        <tr>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[15] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[15]" ng-click="setFn(13, 14, 15, 16, 17, 18, 19, 20)">
+                - {{ locoSelectionnee.btn_fn_label[15] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[16] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[16]" ng-click="setFn(13, 14, 15, 16, 17, 18, 19, 20)">
+                - {{ locoSelectionnee.btn_fn_label[16] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[17] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[17]" ng-click="setFn(13, 14, 15, 16, 17, 18, 19, 20)">
+                - {{ locoSelectionnee.btn_fn_label[17] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[18] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[18]" ng-click="setFn(13, 14, 15, 16, 17, 18, 19, 20)">
+                - {{ locoSelectionnee.btn_fn_label[18] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[19] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[19]" ng-click="setFn(13, 14, 15, 16, 17, 18, 19, 20)">
+                - {{ locoSelectionnee.btn_fn_label[19] }}</label>
+            </div></td>
+        </tr>
+        <tr>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[20] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[20]" ng-click="setFn(13, 14, 15, 16, 17, 18, 19, 20)">
+                - {{ locoSelectionnee.btn_fn_label[20] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[21] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[21]" ng-click="setFn(21, 22, 23, 24, 25, 26, 27, 28)">
+                - {{ locoSelectionnee.btn_fn_label[21] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[22] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[22]" ng-click="setFn(21, 22, 23, 24, 25, 26, 27, 28)">
+                - {{ locoSelectionnee.btn_fn_label[22] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[23] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[23]" ng-click="setFn(21, 22, 23, 24, 25, 26, 27, 28)">
+                - {{ locoSelectionnee.btn_fn_label[23] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[24] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[24]" ng-click="setFn(21, 22, 23, 24, 25, 26, 27, 28)">
+                - {{ locoSelectionnee.btn_fn_label[24] }}</label>
+            </div></td>
+        </tr>
+        <tr>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[25] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[25]" ng-click="setFn(21, 22, 23, 24, 25, 26, 27, 28)">
+                - {{ locoSelectionnee.btn_fn_label[25] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[26] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[26]" ng-click="setFn(21, 22, 23, 24, 25, 26, 27, 28)">
+                - {{ locoSelectionnee.btn_fn_label[26] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[27] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[27]" ng-click="setFn(21, 22, 23, 24, 25, 26, 27, 28)">
+                - {{ locoSelectionnee.btn_fn_label[27] }}</label>
+            </div></td>
+          <td><div ng-if="locoSelectionnee.btn_fn_label[28] != ''">
+              <label>
+                <input type="checkbox" ng-model="locoSelectionnee.btn_fn[28]" ng-click="setFn(21, 22, 23, 24, 25, 26, 27, 28)">
+                - {{ locoSelectionnee.btn_fn_label[28] }}</label>
+            </div></td>
+        </tr>
+      </table>
+    </form>
+    <div class="border_20"></div>
+  </div>
+  <div class="w3-blockquote w3-paragraph w3-light-grey w3-card-4 w3-leftbar w3-border-red w3-text-grey">
+    <button class="btn_fermeture_zone" ng-click="showParametrages = !showParametrages;"> <span ng-class="{'glyphicon glyphicon-upload glyphicon_18' : showParametrages, 'glyphicon glyphicon-download glyphicon_18' : !showParametrages}"></span></button>
+    <h3 class="title_section">Parametrages : {{ locoSelectionnee.nomLong }}</h3>
+  </div>
+  <div ng-show="showParametrages">
+    <div class="border_20 spacer_20"></div>
+    <table width="100%">
+      <tr>
+        <td colspan="5" class="typoBold">Modification de l'adresse</td>
+      </tr>
+      <tr>
+        <td>ID : {{ locoSelectionnee.id }}</td>
+        <td>@ actuelle : {{ locoSelectionnee.address }}</td>
+        <td>Nouvelle adresse :
+          <input type="number" ng-model="numNewAdress" size="6" min="1" max="9999"></td>
+        <td></td>
+        <td><button type="button"  ng-click="setNewAdressCourte()" class="btn btn-success btn_widthMini_150"><span class="glyphicon glyphicon-upload"></span> Valider</button></td>
+      </tr>
+    </table>
+    <div class="spacer_20"></div>
+    <form id="form2">
+      <div class="border_20 spacer_20"></div>
+      <!--valeurs pour locos-->
+      <table width="40%">
+        <thead>
+          <tr>
+            <th colspan="2">Informations pour les locos :</th>
+          </tr>
+        </thead>
+        <tr>
+          <td width="10%">Nom court : </td>
+          <td width="30%"><input type="text" ng-model="locoSelectionnee.nomCourt" size="70"></td>
+        </tr>
+        <tr>
+          <td>Nom long : </td>
+          <td><input type="text" ng-model="locoSelectionnee.nomLong" size="70"></td>
+        </tr>
+        <tr>
+          <td>Url image : </td>
+          <td><input type="text" ng-model="locoSelectionnee.urlImg" size="70"></td>
+        </tr>
+      </table>
+      <div class="border_20 spacer_20"></div>
+      <div class="spacer_20"></div>
+      <button class="" ng-click="showNomsFonctions = !showNomsFonctions;"><span ng-class="{'glyphicon glyphicon-upload' : showNomsFonctions, 'glyphicon glyphicon-download' : !showNomsFonctions}"></span></button>
+      <span class="typoBold"> Noms pour les fonctions : </span>
+      <div ng-show="showNomsFonctions"> 
+        <!--nom des fonctions du decodeur-->
+        <table width="40%">
+          <tr>
+            <td width="1%">F0 : </td>
+            <td width="39%"><input type="text" ng-model="locoSelectionnee.btn_fn_label[4]" size="50"></td>
+            <!-- bizarrie de DCC++ --> 
+          </tr>
+          <tr>
+            <td>F1 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[0]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F2 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[1]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F3 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[2]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F4 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[3]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F5 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[5]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F6 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[6]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F7 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[7]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F8 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[8]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F9 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[9]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F10 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[10]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F11 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[11]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F12 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[12]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F13 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[13]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F14 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[14]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F15 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[15]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F16 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[16]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F17 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[17]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F18 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[18]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F19 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[19]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F20 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[20]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F21 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[21]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F22 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[22]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F23 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[23]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F24 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[24]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F25 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[25]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F26 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[26]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F27 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[27]" size="50"></td>
+          </tr>
+          <tr>
+            <td>F28 : </td>
+            <td><input type="text" ng-model="locoSelectionnee.btn_fn_label[28]" size="50"></td>
+          </tr>
+        </table>
+      </div>
+      <!--ng-show="showNomsFonctions"-->
+    </form>
+
+    <div class="border_20 spacer_20"></div>
+  </div>
+  <!--showParametrages--> 
+</div>
+<!--container-->
+</body>
+</html>

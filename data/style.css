@@ -1,0 +1,245 @@
+body {
+	background-color: #CCC;
+}
+body, td, th {
+	font-size: 14px;
+	color: #333;
+}
+
+#main_contain {
+	width: 900px;
+	margin: 0 auto;
+	min-height: 600px;
+}
+
+.champ_header {padding:10px;display:inline}
+
+.title_section {
+	margin-left: 20px;
+	padding-bottom: 10px;
+	padding-top: 10px;
+}
+.tabWidth30 {
+	width:30%;
+}
+.tabWidth50 {
+	width:50%;
+}
+
+.col-sm-2 {
+	padding-right: 0px;
+	/*padding-left: 0px;*/
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+#loco_listSelect {padding-left:10px;padding-right:10px;float:left;}
+
+.float_right {float:right;}
+
+
+.glyphicon_18 {font-size: 18px;}
+.glyphicon-ok {color: #00CE13;}
+.glyphicon-ok:hover {color: #00CE13;}
+.glyphicon-off {color: #ff0000;}
+.glyphicon-off:hover {color: #ff0000;}
+
+
+
+#btn_AV:hover {color:#90C;}
+#btn_AV:active {color:#F30;}
+#btn_AR:hover {color:#90C;}
+#btn_AR:active {color:#F30;}
+
+.btn_fermeture_zone {float: right; margin-top:5px; margin-right:5px;}
+.btn_delete {color:#F30;border:none;background:none;}
+
+td {
+	padding: 5px;
+}
+.collapse {
+  border-collapse: collapse;
+}
+
+.btn_functions {
+	width: 150px;
+}
+
+.typoSize10 {font-size:10px;}
+.typoSize11 {font-size:11px;}
+.typoSize12 {font-size:10px;}
+
+.typoGreen {color:#00CE13;}
+.typoRed {color:#F30;}
+.typoBlack {color:#000;}
+.typoYellow {color:#F90}
+.typoBold {font-weight: bold;}
+
+
+label {
+    font-weight: 400;
+}
+
+.spacer_20 {
+	margin-top: 20px;
+}
+
+.border_20 {
+	border-style: dotted;
+	border-width: 1px;
+}
+
+a {
+	cursor: pointer;
+}
+.spacer {
+	margin-top: 20px;
+}
+.hSpacer {
+	margin-left: 20px;
+}
+.hSpacerLR10 {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+.table-hover > tbody > tr:hover > td, .table-hover > tbody > tr:hover > th {
+	background-color: #b2dbff;
+	color: #ffffff;
+}
+.clickable {
+	cursor: pointer;
+}
+
+.image_shadow {
+	-moz-box-shadow: 8px 8px 20px 0px #9b9b9b;
+	-webkit-box-shadow: 8px 8px 20px 0px #9b9b9b;
+	-o-box-shadow: 8px 8px 20px 0px #9b9b9b;
+	box-shadow: 8px 8px 20px 0px #9b9b9b;
+ filter:progid:DXImageTransform.Microsoft.Shadow(color=#9b9b9b, Direction=134, Strength=20);
+}
+
+.image_shadow_icons {
+	-moz-box-shadow: 4px 4px 10px 0px #9b9b9b;
+	-webkit-box-shadow: 4px 4px 10px 0px #9b9b9b;
+	-o-box-shadow: 4px 4px 10px 0px #9b9b9b;
+	box-shadow: 4px 4px 10px 0px #9b9b9b;
+ filter:progid:DXImageTransform.Microsoft.Shadow(color=#9b9b9b, Direction=134, Strength=20);
+}
+
+#ag0 {top: 584px; left: 267px;}
+#ag1 {top: 656px; left: 288px;}
+#ag2 {top: 520px; left: 340px;}
+#ag3 {top: 596px; left: 357px;}
+#ag4 {top: 534px; left: 763px;}
+#ag5 {top: 517px; left: 838px;}
+#ag6 {top: 588px; left: 830px;}
+#ag7 {top: 660px; left: 823px;}
+#ag8 {top: 450px; left: 401px;}
+#ag9 {top: 366px; left: 492px;}
+#ag10 {top: 122px; left: 138px;}
+#ag11 {top: 135px; left: 431px;}
+#ag12 {top: 605px; left: 752px;}
+
+.tabHeaderCol01 {width: 15%;}
+.tabHeaderCol02 {width: 15%;}
+.tabHeaderCol03 {width: 5%;} 
+.tabHeaderCol04 {width: 65%;}  
+
+.listLocoCol01 {width: 5%;}
+.listLocoCol02 {width: 2%;text-align: right;}
+.listLocoCol03 {width: 20%;}
+.listLocoCol04 {width: 2%;text-align: right;font-weight: bold;}
+.listLocoCol05 {width: 2%;text-align: right;}
+.listLocoCol06 {width: 69%;text-align: right;}
+
+
+input[type=range].speedSlider {
+	width: 100%;
+	margin: 19.5px 0;
+	background-color: transparent;
+	-webkit-appearance: none;
+}
+input[type=range].speedSlider:focus {
+	outline: none;
+}
+input[type=range].speedSlider::-webkit-slider-runnable-track {
+ background: #ffffff;
+ border: 0.9px solid #010101;
+ border-radius: 17px;
+ width: 100%;
+ height: 10px;
+ cursor: pointer;
+}
+input[type=range].speedSlider::-webkit-slider-thumb {
+ margin-top: -6px;
+ width: 16px;
+ height: 20px;
+ background: #6fb90e;
+ border: 1px solid #000000;
+ border-radius: 3px;
+ cursor: pointer;
+ -webkit-appearance: none;
+}
+input[type=range].speedSlider:focus::-webkit-slider-runnable-track {
+ background: #ffffff;
+}
+input[type=range].speedSlider::-moz-range-track {
+ background: #ffffff;
+ border: 0.9px solid #010101;
+ border-radius: 17px;
+ width: 100%;
+ height: 10px;
+ cursor: pointer;
+}
+input[type=range].speedSlider::-moz-range-thumb {
+ width: 16px;
+ height: 20px;
+ background: #6fb90e;
+ border: 1px solid #000000;
+ border-radius: 3px;
+ cursor: pointer;
+}
+input[type=range].speedSlider::-ms-track {
+ background: transparent;
+ border-color: transparent;
+ border-width: 19.5px 0;
+ color: transparent;
+ width: 100%;
+ height: 10px;
+ cursor: pointer;
+}
+input[type=range].speedSlider::-ms-fill-lower {
+ background: #ffffff;
+ border: 0.9px solid #010101;
+ border-radius: 34px;
+}
+input[type=range].speedSlider::-ms-fill-upper {
+ background: #ffffff;
+ border: 0.9px solid #010101;
+ border-radius: 34px;
+}
+input[type=range].speedSlider::-ms-thumb {
+ width: 16px;
+ height: 20px;
+ background: #6fb90e;
+ border: 1px solid #000000;
+ border-radius: 3px;
+ cursor: pointer;
+ margin-top: 0px;
+/*Needed to keep the Edge thumb centred*/
+}
+input[type=range].speedSlider:focus::-ms-fill-lower {
+ background: #ffffff;
+}
+input[type=range].speedSlider:focus::-ms-fill-upper {
+ background: #ffffff;
+}
+/*TODO: Use one of the selectors from https://stackoverflow.com/a/20541859/7077589 and figure out
+how to remove the virtical space around the range input in IE*/
+@supports (-ms-ime-align:auto) {
+  /* Pre-Chromium Edge only styles, selector taken from hhttps://stackoverflow.com/a/32202953/7077589 */
+  input[type=range].speedSlider {
+ margin: 0;
+/*Edge starts the margin from the thumb, not the track as other browsers do*/
+}
+}
