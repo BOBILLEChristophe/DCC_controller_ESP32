@@ -157,7 +157,8 @@ void setup()
   ACAN_ESP32_Settings settings(CAN_BITRATE);
   settings.mRxPin = CAN_RX;
   settings.mTxPin = CAN_TX;
-  const ACAN_ESP32_Filter filter = ACAN_ESP32_Filter::singleExtendedFilter(ACAN_ESP32_Filter::data, 0x7E800, 0x1FF807FF);
+  const ACAN_ESP32_Filter filter = ACAN_ESP32_Filter::singleExtendedFilter(
+      ACAN_ESP32_Filter::data, 0xF << 7, 0x1FFFFDFF);
   const uint32_t errorCode = ACAN_ESP32::can.begin(settings, filter);
   if (errorCode == 0)
     Serial.println("Can configuration OK !\n");
@@ -307,8 +308,9 @@ void Task1(void *p)
       const byte fonction = (frame.id & 0x7F8) >> 3;
       // Serial.print("0x");
       // Serial.println(fonction, HEX);
-      if (fonction == 0xF0)
+      switch (fonction)
       {
+      case 0xF0:
         // uint16_t locoAddr = frame.data[0] << 8 + frame.data[1];
         // uint8_t locoSpeed = frame.data[2];
         // uint8_t locoDir = frame.data[3];
@@ -319,6 +321,10 @@ void Task1(void *p)
         // Serial.print("direction");
         // Serial.println(locoDir);
         dcc.setThrottle((frame.data[0] << 8) + frame.data[1], frame.data[2], frame.data[3]);
+        break;
+      case 0xF1:
+        dcc.emergency();
+        break;
       }
     }
 #endif
