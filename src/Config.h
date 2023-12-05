@@ -2,7 +2,7 @@
 #define CONFIG_H
 
 #define PROJECT "DCCxx ESP32 WIFI - RAILCOM"
-#define VERSION "v 2.1"
+#define VERSION "v 2.2"
 
 #define PIN_PWM GPIO_NUM_12                  // ENABLE (PWM)
 #define PIN_DIR GPIO_NUM_13                  // SIGNAL (DIR)
@@ -79,17 +79,22 @@
 #define DCC_PACKET_TYPE_STEP_28 0x20
 #define DCC_PACKET_TYPE_STEP_128 0x30
 
-#define DCC_STACK_SPEED_SIZE 8	 // Taille de la pile DCC - vitesse des locos
-#define DCC_STACK_FUNCTION_SIZE 16   // Taille de la pile DCC - fonctions des locos
-#define DCC_STACK_CONTROL_SIZE 16   // Taille de la pile DCC - réglage des CV
+#define DCC_STACK_SPEED_SIZE 8     // Taille de la pile DCC - vitesse des locos
+#define DCC_STACK_FUNCTION_SIZE 16 // Taille de la pile DCC - fonctions des locos
+#define DCC_STACK_CONTROL_SIZE 16  // Taille de la pile DCC - réglage des CV
 
 #define DCC_STACK_SPEED 1
 #define DCC_STACK_FUNCTION 2
 #define DCC_STACK_CONTROL 3
 
-
 #define LM_CRANS128 4
 
-enum packet_type{DCC_SPEED=1,DCC_FCT,DCC_CV,DCC_RESET};
+enum packet_type
+{
+    DCC_SPEED = 1,
+    DCC_FCT,
+    DCC_CV,
+    DCC_RESET
+};
 
 #endif
